@@ -8,6 +8,25 @@ jobs:
   trigger-python-build:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/build') }}
+    
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Call Python Build Workflow
+        id: build
         uses: ./.github/workflows/python_build.yml
+
+      - name: Post comment on issue
+        if: ${{ always() }}  # Run this step even if the previous step fails
+        run: |
+          if [ "${{ steps.build.outcome }}" == "success" ]; then
+            comment="Build passed! Merging is allowed."
+          else
+            comment="Build failed! Please check the errors."
+          fi
+
+          # Post the comment using GitHub CLI
+          echo "${comment}" | gh pr comment ${{ github.event.issue.number }} --body -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
