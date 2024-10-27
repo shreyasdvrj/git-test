@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read          # Allow read access to repository contents
-  pull_requests: write  
+  issues: write  
   
 jobs:
   trigger-python-build:
