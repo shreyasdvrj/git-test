@@ -4,6 +4,10 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  contents: read          # Allow read access to repository contents
+  pull_requests: write  
+  
 jobs:
   trigger-python-build:
     runs-on: ubuntu-latest
