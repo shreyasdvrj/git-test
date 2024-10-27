@@ -13,9 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Call Python Build Workflow
-        id: build
-        uses: ./.github/workflows/python_build.yml
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.13.0-rc.1"
+
+      - name: Run tests
+        run: pytest --cov 
 
       - name: Post comment on issue
         if: ${{ always() }}  # Run this step even if the previous step fails
