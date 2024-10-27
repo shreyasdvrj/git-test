@@ -1,4 +1,3 @@
-# .github/workflows/build_on_comment.yml
 name: Build on Comment
 
 on:
@@ -9,19 +8,25 @@ jobs:
   trigger-python-build:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/build') }}
+    
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Call Python Build Workflow
+        id: build
         uses: ./.github/workflows/python_build.yml
 
-      - name: Post result as comment
-        if: always()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const status = context.payload.workflow_run.conclusion === 'success' ? 'succeeded ✅' : 'failed ❌';
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Build ${status}`
-            });
+      - name: Post comment on issue
+        if: ${{ always() }}  # Run this step even if the previous step fails
+        run: |
+          if [ "${{ steps.build.outcome }}" == "success" ]; then
+            comment="Build passed! Merging is allowed."
+          else
+            comment="Build failed! Please check the errors."
+          fi
+
+          # Post the comment using GitHub CLI
+          echo "${comment}" | gh pr comment ${{ github.event.issue.number }} --body -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
