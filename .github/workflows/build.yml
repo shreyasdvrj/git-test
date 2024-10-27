@@ -11,16 +11,3 @@ jobs:
     steps:
       - name: Call Python Build Workflow
         uses: ./.github/workflows/python_build.yml
-
-      - name: Post result as comment
-        if: always()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const status = github.context.payload.comment.body.includes('/build') ? 'succeeded ✅' : 'failed ❌';
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Build ${status}`
-            });
