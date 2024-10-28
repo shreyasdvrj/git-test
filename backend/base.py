@@ -649,7 +649,7 @@ def addUserBurnedCalories(): # pragma: no cover
 @api.route('/createFood', methods=["POST"])
 def createFood():
     """
-    Create a custom food
+    Create a custom foods
 
     This endpoint allows an authenticated user to create their custom food item with the amount of calories it has.
 
