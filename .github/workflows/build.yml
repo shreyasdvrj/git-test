@@ -38,7 +38,7 @@ jobs:
         if: ${{ always() }}  # Run this step even if the previous step fails
         run: |
           if [ "${{ steps.build.outcome }}" == "success" ]; then
-            comment="Build passed! Merging is allowed."
+            comment="Build passed! Merging is now allowed."
           else
             comment="Build failed! Please fix the errors."
           fi
