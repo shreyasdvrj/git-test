@@ -40,7 +40,7 @@ jobs:
           if [ "${{ steps.build.outcome }}" == "success" ]; then
             comment="Build passed! Merging is allowed."
           else
-            comment="Build failed! Please check the errors."
+            comment="Build failed! Please fix the errors."
           fi
 
           # Post the comment using GitHub CLI
