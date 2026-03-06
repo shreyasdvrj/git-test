@@ -1,4 +1,4 @@
-name: Build on Comment
+name: Build on Comments
 
 on:
   issue_comment:
