@@ -5,7 +5,7 @@ on:
     types: [created]
 
 permissions:
-  contents: read          # Allow read access to repository contents
+  contents: read          # Allow read access to repository
   issues: write  
   
 jobs:
