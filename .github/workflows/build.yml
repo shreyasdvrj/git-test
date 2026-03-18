@@ -1,28 +1,30 @@
-name: Build on Comment
+name: Build on Comments
 
 on:
   issue_comment:
     types: [created]
 
 permissions:
-  contents: read          # Allow read access to repository contents
-  issues: write  
+  contents: read          # Allow read access to repository
+  pull-requests: write
   
 jobs:
   trigger-python-build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/build') }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/build-dev') }}
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.13.0-rc.1"
+          python-version: "3.13"
+          cache: pip
 
       - name: Install dependencies
+        id: build
         working-directory: ./backend
         run: |
           pip install -r requirements.txt
@@ -38,12 +40,11 @@ jobs:
         if: ${{ always() }}  # Run this step even if the previous step fails
         run: |
           if [ "${{ steps.build.outcome }}" == "success" ]; then
-            comment="Build passed! Merging is allowed."
+            comment="Build passed! Merging is now allowed."
           else
             comment="Build failed! Please fix the errors."
           fi
 
-          # Post the comment using GitHub CLI
-          echo "${comment}" | gh pr comment ${{ github.event.issue.number }} --body -
+          gh pr comment ${{ github.event.issue.number }} --body "${comment}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
